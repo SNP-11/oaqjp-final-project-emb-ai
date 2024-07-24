@@ -1,40 +1,43 @@
 """
-This module contains a Flask application that provides endpoints for emotion detection.
+server.py
+---------
 
-The application has two routes:
-1. '/' - Renders the index.html template.
-2. '/emotionDetector' - Accepts GET requests with a query parameter 'textToAnalyze',
-   analyzes the emotion in the provided text, and returns a JSON response with emotion
-   details or an error message.
+This module sets up a Flask web application for detecting emotions in
+text inputs using the EmotionDetection package.
+
+Routes:
+    /emotionDetector - Returns the detected emotions for a given text input.
+    / - Renders the index page with the input form.
 """
+
 from flask import Flask, render_template, request
 from EmotionDetection.emotion_detection import emotion_detector
 
 app = Flask("Emotion Detector")
 
-@app.route("/emotionDetector")
+@app.route('/emotionDetector')
 def emotion_detector_function():
-    ''' This function calls the application
-    '''
-    test_to_analyze = request.args.get('textToAnalyze')
+    """This function calls the application."""
+    text_to_analyze = request.args.get('textToAnalyze')
     response = emotion_detector(text_to_analyze)
 
     if response['dominant_emotion'] is None:
         response_text = "Invalid Input! Please try again."
     else:
-        response_text = f"For the given statement, the system response is 'anger': \
-                    {response['anger']}, 'disgust': {response['disgust']}, \
-                    'fear': {response['fear']}, 'joy': {response['joy']}, \
-                    'sadness': {response['sadness']}. The dominant emotion is \
-                    {response['dominant_emotion']}."
+        response_text = (
+            f"For the given statement, the system response is 'anger': "
+            f"{response['anger']}, 'disgust': {response['disgust']}, "
+            f"'fear': {response['fear']}, 'joy': {response['joy']}, "
+            f"'sadness': {response['sadness']}. The dominant emotion is "
+            f"{response['dominant_emotion']}."
+        )
 
     return response_text
 
-@app.route("\")
+@app.route('/')
 def render_index_page():
-    ''' This is the function to render the html interface
-    '''
+    """This is the function to render the HTML interface."""
     return render_template('index.html')
 
 if __name__ == "__main__":
-    app.run(host = "0.0.0.0", port = 5000)
+    app.run(host="0.0.0.0", port=5000)
